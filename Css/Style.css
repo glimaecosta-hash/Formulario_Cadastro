@@ -28,13 +28,16 @@ html {
   object-fit: cover;
 }
 
+/* AJUSTADO: Centralização perfeita em qualquer tela e padding responsivo */
 body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 8%;
+  padding: 40px; /* Padding fixo para não esmagar em telas menores */
+  min-height: 100vh;
 }
 
+/* AJUSTADO: Larguras responsivas */
 .login-container {
   background: rgba(255, 255, 255, 0.25); /* Fundo branco bem transparente */
   backdrop-filter: blur(12px); /* Borra o vídeo que passa por trás */
@@ -43,14 +46,28 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil para dar efeito de relevo */
   border-radius: 30px; /* Deixa as pontas bem arredondadas */
 
-  width: 380px; /* Largura fixa confortável para o card */
-  padding: 40px 30px; /* Espaçamento interno (respiro do conteúdo) */
+  width: 100%; /* Ocupa o espaço disponível */
+  max-width: 380px; /* Limita ao tamanho máximo confortável */
+  padding: 25px 24px; /* Diminuído ligeiramente de 30px para 25px no topo/fundo */
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); /* Sombra suave abaixo do card */
 
-  /* Centraliza os elementos que estão dentro dele */
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Dá um espaço igual entre as seções internas */
+  gap: 10px; /* Espaço reduzido entre os blocos principais */
+  
+  /* IMPEDIR QUE QUEBRE: Permite que o container se ajuste à altura do conteúdo */
+  height: auto; 
+  max-height: 90vh; /* Não deixa o card passar de 90% da altura da tela */
+  overflow-y: auto; /* Se a tela for minúscula, cria uma barra de rolagem interna super discreta */
+}
+
+/* Opcional: deixa a barra de rolagem do card invisível ou bem fininha para não estragar o design */
+.login-container::-webkit-scrollbar {
+  width: 4px;
+}
+.login-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 .enter-signup {
@@ -86,8 +103,8 @@ body {
 
 .Title-Subtitle {
   text-align: center; /* Centraliza o título e subtítulo */
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -95,17 +112,17 @@ body {
 }
 
 .Title-Subtitle h2 {
-  font-size: 1.8rem;
+  font-size: 1.6rem; /* Levemente reduzido para telas menores */
   font-family: "georgia", serif;
   color: #1a1a1a;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: center;
   width: 100%;
 }
 
 .Title-Subtitle p {
-  font-size: 0.9rem; /* Texto menor e discreto */
+  font-size: 0.85rem; /* Levemente menor para caber melhor */
   color: #555; /* Um cinza escuro, mas mais suave que o título */
   font-weight: 500;
   text-align: center;
@@ -117,10 +134,8 @@ body {
 form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px; /* Reduzido de 20px para caber na altura de notebooks */
   width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center; /* Centraliza tudo o que estiver dentro deles horizontalmente */
 }
 
@@ -128,7 +143,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: stretch; /* Centraliza a label e o input horizontalmente */
-  gap: 8px; /* Espaço entre a palavra e a caixinha de digitação */
+  gap: 6px; /* Espaço entre a palavra e a caixinha de digitação */
   background: none; /* Remove o background indesejado da div pai */
   padding: 0; /* Remove padding indesejado da div pai */
   width: 100%; /* Garante que ocupe a largura total do card */
@@ -137,7 +152,7 @@ form {
 }
 
 form label {
-  font-size: 1.1rem;
+  font-size: 1rem; /* Ajustado de 1.1rem */
   font-weight: 500;
   color: #333; /* Cor escura para boa leitura, sem fundo */
   background: none; /* Garante que a label não tenha fundo */
@@ -150,17 +165,12 @@ form label {
 
 form input {
   width: 100%; /* O input ocupa toda a largura útil do container */
-  padding: 14px 20px; /* Altura e espaço interno para o texto digitado */
+  padding: 12px 18px; /* Reduzido levemente de 14px 20px para evitar estourar a altura */
   border: none; /* Remove a borda padrão */
   outline: none; /* Remove a linha de foco padrão */
-  background: rgba(
-    0,
-    0,
-    0,
-    0.18
-  ); /* Fundo escuro semi-transparente idêntico à imagem */
+  background: rgba(0, 0, 0, 0.18); /* Fundo escuro semi-transparente idêntico à imagem */
   border-radius: 30px; /* Formato arredondado de pílula */
-  font-size: 1rem;
+  font-size: 0.95rem; /* Ajustado de 1rem */
   color: #111; /* Cor do texto digitado */
   text-align: center; /* Centraliza o texto digitado */
   transition: all 0.3s ease; /* Transição suave para efeitos */
@@ -172,49 +182,43 @@ form input:focus {
 
 /* --- Botão de Enviar (Entrar) --- */
 
-/* 1. Container do botão (para garantir o alinhamento) */
 .submit-button {
   width: 100%; /* Ocupa a largura total do card */
   display: flex;
   justify-content: center; /* Centraliza o botão */
-  margin-top: 10px; /* Dá um respiro em relação ao campo de senha */
+  margin-top: 5px; 
 }
 
-/* 2. O botão em si */
 .submit-button button {
   width: 100%; /* Faz o botão ocupar toda a largura útil */
-  padding: 15px; /* Altura confortável para o clique */
+  padding: 13px; /* Reduzido de 15px */
   background-color: #111; /* Preto sólido para destacar bem no vidro fosco */
   color: #ffffff; /* Texto branco para alto contraste */
   border: none; /* Remove bordas padrão */
   border-radius: 30px; /* Formato arredondado de pílula */
-  font-size: 1.1rem;
+  font-size: 1rem; /* Ajustado de 1.1rem */
   font-weight: bold; /* Texto em negrito */
   cursor: pointer; /* Transforma o cursor na mãozinha de clique */
   transition: background-color 0.3s ease; /* Transição suave para o efeito de passar o mouse */
 }
 
-/* 3. Efeito ao passar o mouse (Hover) */
 .submit-button button:hover {
   background-color: #333333; /* Transiciona para um cinza escuro ao passar o mouse */
 }
 
 /* --- Rodapé de Cadastro --- */
 
-/* 4. Container do texto de cadastro */
 .Registration {
-  width: 100%; /* <--- ADICIONE ESTA LINHA AQUI */
+  width: 100%; 
   text-align: center; /* Centraliza o texto "Não tem uma conta?" */
-  margin-top: 15px; /* Afasta o rodapé do botão de Entrar */
-  font-size: 0.95rem;
+  margin-top: 10px; /* Ajustado de 15px */
+  font-size: 0.9rem; /* Ajustado de 0.95rem */
 }
 
-/* 5. Estilo do texto comum */
 .Registration p {
   color: #222; /* Cinza escuro legível */
 }
 
-/* 6. Estilo do Link (Cadastre-se) */
 .Registration a {
   color: #000; /* Preto para destacar que é um link clicável */
   font-weight: bold; /* Texto em negrito */
@@ -222,7 +226,6 @@ form input:focus {
   transition: color 0.3s ease;
 }
 
-/* 7. Efeito ao passar o mouse no link */
 .Registration a:hover {
   text-decoration: underline; /* O sublinhado aparece de forma elegante ao passar o mouse */
 }
@@ -235,44 +238,59 @@ form input:focus {
 
 #login-acesso,
 #cadastro-acesso {
-  
   flex-direction: column;
-  gap: 15px;
+  gap: 10px; /* Reduzido de 15px */
   width: 100%;
 }
 
-
 /* Card de Notificação Flutuante */
 .aviso-email-card {
-    position: fixed;
-    top: 20px;
-    right: -350px; /* Começa fora da tela do lado direito */
-    background-color: #ffffff;
-    color: #333333;
-    border-left: 5px solid #2ecc71; /* Barra verde na lateral */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    padding: 15px 20px;
-    border-radius: 8px;
-    width: 300px;
-    z-index: 1000;
-    transition: right 0.5s ease; /* Efeito de deslizar */
-    font-family: sans-serif;
+  position: fixed;
+  top: 20px;
+  right: -350px; /* Começa fora da tela do lado direito */
+  background-color: #ffffff;
+  color: #333333;
+  border-left: 5px solid #2ecc71; /* Barra verde na lateral */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 15px 20px;
+  border-radius: 8px;
+  width: 300px;
+  z-index: 1000;
+  transition: right 0.5s ease; /* Efeito de deslizar */
+  font-family: sans-serif;
 }
 
 /* Classe que o JS vai adicionar para fazer o card deslizar para dentro da tela */
 .aviso-email-card.mostrar {
-    right: 20px; 
+  right: 20px; 
 }
 
 .aviso-email-card h4 {
-    margin: 0 0 5px 0;
-    color: #2ecc71;
-    font-size: 1.1em;
+  margin: 0 0 5px 0;
+  color: #2ecc71;
+  font-size: 1.1em;
 }
 
 .aviso-email-card p {
-    margin: 0;
-    font-size: 0.9em;
-    color: #666;
-    line-height: 1.4;
+  margin: 0;
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* --- 📱 ADICIONADO: MEDIA QUERIES PARA CELULARES E TELAS MUITO PEQUENAS --- */
+@media (max-width: 480px) {
+  body {
+    padding: 15px; /* Margem pequena nas bordas da tela */
+    justify-content: center; /* Centraliza o card horizontalmente em celulares */
+  }
+  
+  .login-container {
+    padding: 20px 15px;
+    border-radius: 18px;
+  }
+  
+  form input, .submit-button button {
+    font-size: 0.9rem;
+  }
 }
