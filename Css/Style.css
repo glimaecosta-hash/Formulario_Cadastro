@@ -1,0 +1,278 @@
+/* Aqui * no estamos editando a pagina deixando ela como queremos  */
+* {
+  margin: 0; /* Remove a margem padrão de todos os elementos */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  width: 100%;
+  font-family: sans-serif;
+  overflow-x: hidden;
+}
+
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.background-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8%;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.25); /* Fundo branco bem transparente */
+  backdrop-filter: blur(12px); /* Borra o vídeo que passa por trás */
+  -webkit-backdrop-filter: blur(12px); /* Suporte para navegadores Safari */
+
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil para dar efeito de relevo */
+  border-radius: 30px; /* Deixa as pontas bem arredondadas */
+
+  width: 380px; /* Largura fixa confortável para o card */
+  padding: 40px 30px; /* Espaçamento interno (respiro do conteúdo) */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); /* Sombra suave abaixo do card */
+
+  /* Centraliza os elementos que estão dentro dele */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Dá um espaço igual entre as seções internas */
+}
+
+.enter-signup {
+  display: flex;
+  background: rgb(0, 0, 0, 0.15); /* Fundo preto bem transparente */
+  border-radius: 30px; /* Mantém a consistência com o card principal */
+  padding: 6px;
+}
+
+.enter-signup button {
+  background: none; /* Remove o fundo padrão do botão */
+  border: none; /* Remove a borda padrão do botão */
+  flex: 1;
+  cursor: pointer; /* Mostra a mãozinha de clique ao passar o mouse */
+}
+
+.enter-signup h2 {
+  flex: 1; /* Divide o espaço igualmente (50% para cada) */
+  text-align: center; /* Centraliza o texto */
+  font-size: 1rem; /* Tamanho de fonte agradável */
+  font-weight: 600;
+  padding: 12px 0; /* Altura interna do botão */
+  cursor: pointer; /* Mostra a mãozinha de clique ao passar o mouse */
+  color: #333; /* Cor do texto padrão */
+  border-radius: 25px; /* Arredonda individualmente cada botão interno */
+  transition: all 0.3s ease; /* Transição suave para quando mudarmos de cor */
+}
+
+.enter-signup button.ativo h2 {
+  background: rgba(0, 0, 0, 0.25); /* Fundo escuro de destaque */
+  color: #111; /* Texto mais forte */
+}
+
+.Title-Subtitle {
+  text-align: center; /* Centraliza o título e subtítulo */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza tudo o que estiver dentro deles horizontalmente */
+}
+
+.Title-Subtitle h2 {
+  font-size: 1.8rem;
+  font-family: "georgia", serif;
+  color: #1a1a1a;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: center;
+  width: 100%;
+}
+
+.Title-Subtitle p {
+  font-size: 0.9rem; /* Texto menor e discreto */
+  color: #555; /* Um cinza escuro, mas mais suave que o título */
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+}
+
+/* Formulário de login */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza tudo o que estiver dentro deles horizontalmente */
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Centraliza a label e o input horizontalmente */
+  gap: 8px; /* Espaço entre a palavra e a caixinha de digitação */
+  background: none; /* Remove o background indesejado da div pai */
+  padding: 0; /* Remove padding indesejado da div pai */
+  width: 100%; /* Garante que ocupe a largura total do card */
+  max-width: 320px; /* Controla a largura máxima dos campos para não colarem na borda */
+  margin: 0 auto; /* Centraliza o bloco do campo no meio do card */
+}
+
+form label {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333; /* Cor escura para boa leitura, sem fundo */
+  background: none; /* Garante que a label não tenha fundo */
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+  padding-left: 15px; /* Dá um leve espaço para alinhar com o arredondado do input */
+}
+
+form input {
+  width: 100%; /* O input ocupa toda a largura útil do container */
+  padding: 14px 20px; /* Altura e espaço interno para o texto digitado */
+  border: none; /* Remove a borda padrão */
+  outline: none; /* Remove a linha de foco padrão */
+  background: rgba(
+    0,
+    0,
+    0,
+    0.18
+  ); /* Fundo escuro semi-transparente idêntico à imagem */
+  border-radius: 30px; /* Formato arredondado de pílula */
+  font-size: 1rem;
+  color: #111; /* Cor do texto digitado */
+  text-align: center; /* Centraliza o texto digitado */
+  transition: all 0.3s ease; /* Transição suave para efeitos */
+}
+
+form input:focus {
+  background: rgba(0, 0, 0, 0.28); /* Fundo um pouco mais escuro ao focar */
+}
+
+/* --- Botão de Enviar (Entrar) --- */
+
+/* 1. Container do botão (para garantir o alinhamento) */
+.submit-button {
+  width: 100%; /* Ocupa a largura total do card */
+  display: flex;
+  justify-content: center; /* Centraliza o botão */
+  margin-top: 10px; /* Dá um respiro em relação ao campo de senha */
+}
+
+/* 2. O botão em si */
+.submit-button button {
+  width: 100%; /* Faz o botão ocupar toda a largura útil */
+  padding: 15px; /* Altura confortável para o clique */
+  background-color: #111; /* Preto sólido para destacar bem no vidro fosco */
+  color: #ffffff; /* Texto branco para alto contraste */
+  border: none; /* Remove bordas padrão */
+  border-radius: 30px; /* Formato arredondado de pílula */
+  font-size: 1.1rem;
+  font-weight: bold; /* Texto em negrito */
+  cursor: pointer; /* Transforma o cursor na mãozinha de clique */
+  transition: background-color 0.3s ease; /* Transição suave para o efeito de passar o mouse */
+}
+
+/* 3. Efeito ao passar o mouse (Hover) */
+.submit-button button:hover {
+  background-color: #333333; /* Transiciona para um cinza escuro ao passar o mouse */
+}
+
+/* --- Rodapé de Cadastro --- */
+
+/* 4. Container do texto de cadastro */
+.Registration {
+  width: 100%; /* <--- ADICIONE ESTA LINHA AQUI */
+  text-align: center; /* Centraliza o texto "Não tem uma conta?" */
+  margin-top: 15px; /* Afasta o rodapé do botão de Entrar */
+  font-size: 0.95rem;
+}
+
+/* 5. Estilo do texto comum */
+.Registration p {
+  color: #222; /* Cinza escuro legível */
+}
+
+/* 6. Estilo do Link (Cadastre-se) */
+.Registration a {
+  color: #000; /* Preto para destacar que é um link clicável */
+  font-weight: bold; /* Texto em negrito */
+  text-decoration: none; /* Remove aquele sublinhado padrão feio */
+  transition: color 0.3s ease;
+}
+
+/* 7. Efeito ao passar o mouse no link */
+.Registration a:hover {
+  text-decoration: underline; /* O sublinhado aparece de forma elegante ao passar o mouse */
+}
+
+/* Cadastro */
+
+#cadastro-acesso {
+  display: none;
+}
+
+#login-acesso,
+#cadastro-acesso {
+  
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+
+/* Card de Notificação Flutuante */
+.aviso-email-card {
+    position: fixed;
+    top: 20px;
+    right: -350px; /* Começa fora da tela do lado direito */
+    background-color: #ffffff;
+    color: #333333;
+    border-left: 5px solid #2ecc71; /* Barra verde na lateral */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 15px 20px;
+    border-radius: 8px;
+    width: 300px;
+    z-index: 1000;
+    transition: right 0.5s ease; /* Efeito de deslizar */
+    font-family: sans-serif;
+}
+
+/* Classe que o JS vai adicionar para fazer o card deslizar para dentro da tela */
+.aviso-email-card.mostrar {
+    right: 20px; 
+}
+
+.aviso-email-card h4 {
+    margin: 0 0 5px 0;
+    color: #2ecc71;
+    font-size: 1.1em;
+}
+
+.aviso-email-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.4;
+}

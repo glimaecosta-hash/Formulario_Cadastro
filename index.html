@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acesso</title>
+    <link rel="stylesheet" href="./Css/Style.css" />
+  </head>
+
+  <body>
+    <div class="background-video">
+      <video autoplay muted loop>
+        <source src="./Video/videoDefundo.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="login-container" id="login-container">
+      <div class="enter-signup">
+        <button id="btn-entrar" class="ativo"><h2>Entrar</h2></button>
+        <button id="btn-cadastrar"><h2>Cadastrar</h2></button>
+      </div>
+
+      <div id="login-acesso">
+        <div class="Title-Subtitle">
+          <h2>Entrar na Sua Conta</h2>
+          <p>Informe suas credenciais para acessar sua conta.</p>
+        </div>
+
+        <form id="formulario-login">
+          <div class="campo-formulario">
+            <label for="campo-usuario">Usuário:</label>
+            <input
+              type="text"
+              id="campo-usuario"
+              name="campo-usuario"
+              required
+            />
+          </div>
+          <div class="campo-formulario">
+            <label for="campo-senha">Senha:</label>
+            <input
+              type="password"
+              id="campo-senha"
+              name="campo-senha"
+              required
+            />
+          </div>
+          <p id="mensagem-erro" style="margin: 10px 0; min-height: 20px"></p>
+          <div class="submit-button">
+            <button type="submit">Entrar</button>
+          </div>
+        </form>
+
+        <div class="Registration">
+          <p>Não tem uma conta? <a href="register.html">Cadastre-se</a></p>
+        </div>
+      </div>
+
+      <!-- Cadastro -->
+
+      <div id="cadastro-acesso">
+        <div class="Title-Subtitle">
+          <h2>Crie Sua Conta</h2>
+          <p>Preencha os dados abaixo</p>
+        </div>
+
+        <form id="form-cadastro">
+          <div class="campo-formulario">
+            <label for="new-name">Nome:</label>
+            <input type="text" id="new-name" name="new-name" required />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="new-username">Nome de Usuário:</label>
+            <input type="text" id="new-username" name="new-username" required />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="new-password">Senha:</label>
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              required
+            />
+          </div>
+
+          <div class="campo-formulario">
+            <label for="confirm-password">Confirmar Senha:</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              required
+            />
+          </div>
+
+          <div class="submit-button">
+            <button type="submit">Cadastrar</button>
+          </div>
+        </form>
+
+        <div class="Registration">
+          <p>Já tem uma conta? <a href="#" id="link-entrar">Entre aqui</a></p>
+        </div>
+      </div>
+    </div>
+
+    <script src="./Js/logica.js"></script>
+    
+  <div id="card-aviso" class="aviso-email-card">
+    <h4>✉️ Verifique seu E-mail!</h4>
+    <p>Enviamos um e-mail de confirmação para você. Por favor, cheque a sua caixa de entrada e de spam.</p>
+  </div>
+
+  </body>
+</html>
