@@ -1,5 +1,5 @@
 // ============================================
-//  CONFIGURAÇÕES GLOBAIS
+//   CONFIGURAÇÕES GLOBAIS
 // ============================================
 
 const API_URL = "https://api-formulario-cadastro-main.onrender.com";  
@@ -16,26 +16,20 @@ const telaCadastro = document.getElementById("cadastro-acesso");
 
 btnCadastrar.addEventListener("click", () => {
   telaLogin.style.display = "none";
-
   telaCadastro.style.display = "flex";
-
   btnEntrar.classList.remove("ativo");
-
   btnCadastrar.classList.add("ativo");
 });
 
 btnEntrar.addEventListener("click", () => {
   telaCadastro.style.display = "none";
-
   telaLogin.style.display = "flex";
-
   btnCadastrar.classList.remove("ativo");
-
   btnEntrar.classList.add("ativo");
 });
 
 // ============================================
-//  FUNÇÕES AUXILIARES DE API
+//   FUNÇÕES AUXILIARES DE API
 // ============================================
 
 /**
@@ -112,7 +106,7 @@ async function requisitar(endpoint, opcoes = {}) {
 }
 
 // ============================================
-//  SESSÃO E TOKEN
+//   SESSÃO E TOKEN
 // ============================================
 
 /**
@@ -140,7 +134,7 @@ function estaLogado() {
 }
 
 /**
- * Remove todos os dados de sessão e redireciona para a tela de login.
+ * Remove todos os dados de sessão.
  */
 function logout() {
   localStorage.removeItem(TOKEN_KEY);
@@ -176,7 +170,7 @@ async function carregarPerfil() {
 }
 
 // ============================================
-//  CADASTRO
+//   CADASTRO
 // ============================================
 
 const formCadastro = document.getElementById("form-cadastro");
@@ -196,9 +190,7 @@ function validarCadastro(dados) {
 }
 
 // Função genérica para tratar erros padronizados do FastAPI (HTTPException)
-// Erros agora retornam: { detail: "mensagem" } ou lista de erros (422)
 async function tratarErroAPI(resposta) {
-  // Tenta ler o corpo do erro
   let erro;
   try {
     erro = await resposta.json();
@@ -206,29 +198,13 @@ async function tratarErroAPI(resposta) {
     throw new Error(`Erro ${resposta.status}: ${resposta.statusText}`);
   }
 
-  // 422 = validação do Pydantic (retorna lista de erros)
   if (resposta.status === 422 && Array.isArray(erro.detail)) {
     const primeiroErro = erro.detail[0];
     const campo = primeiroErro.loc[primeiroErro.loc.length - 1];
     throw new Error(`${campo}: ${primeiroErro.msg}`);
   }
 
-  // Outros erros (400, 401, 500) → { detail: "mensagem" }
   throw new Error(erro.detail || `Erro ${resposta.status}`);
-}
-
-// Validações de tamanho mínimo (espelhando o backend)
-function validarCadastro(dados) {
-  if (dados.nome.length < 2) {
-    return "O nome deve ter pelo menos 2 caracteres!";
-  }
-  if (dados.usuario.length < 3) {
-    return "O nome de usuário deve ter pelo menos 3 caracteres!";
-  }
-  if (dados.senha.length < 6) {
-    return "A senha deve ter pelo menos 6 caracteres!";
-  }
-  return null; // Sem erros
 }
 
 formCadastro.addEventListener("submit", async (event) => {
@@ -272,7 +248,7 @@ formCadastro.addEventListener("submit", async (event) => {
 });
 
 // ============================================
-//  LOGIN
+//   LOGIN
 // ============================================
 
 const formularioLogin = document.getElementById("formulario-login");
@@ -280,9 +256,15 @@ const formularioLogin = document.getElementById("formulario-login");
 formularioLogin.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const usuarioInput = document.getElementById("campo-usuario").value.trim();
+  // Captura o input do usuário
+  let usuarioInput = document.getElementById("campo-usuario").value.trim();
   const senhaInput = document.getElementById("campo-senha").value;
   const mensagemErro = document.getElementById("mensagem-erro");
+
+  // Garante que comece com @ para refletir a regra do backend Python (.startsWith com 'S' maiúsculo)
+  if (!usuarioInput.startsWith("@")) {
+    usuarioInput = `@${usuarioInput}`;
+  }
 
   // Limpa mensagens anteriores
   mensagemErro.textContent = "";
@@ -299,14 +281,10 @@ formularioLogin.addEventListener("submit", async (event) => {
     });
 
     // LOGIN DEU CERTO! 🎉
-    mensagemErro.textContent =
-      resultado.mensagem || "Login realizado com sucesso!";
+    mensagemErro.textContent = resultado.mensagem || "Login realizado com sucesso!";
     mensagemErro.style.color = "green";
 
-    // ============================================
-    //  ⭐ AQUI ESTÁ A MUDANÇA PRINCIPAL ⭐
-    //  Salva o token JWT e os dados no localStorage
-    // ============================================
+    // Salva o token JWT e os dados no localStorage
     if (resultado.access_token) {
       salvarSessao(resultado.access_token, {
         usuario: resultado.usuario,
@@ -334,10 +312,8 @@ formularioLogin.addEventListener("submit", async (event) => {
 });
 
 // ============================================
-//  🔄 SESSÃO AUTOMÁTICA AO CARREGAR A PÁGINA
+//   🔄 SESSÃO AUTOMÁTICA AO CARREGAR A PÁGINA
 // ============================================
-// Se já existir um token válido salvo, o usuário já é considerado logado.
-// A função carregarPerfil() confirma com o backend se o token ainda vale.
 
 (async function verificarSessao() {
   if (estaLogado()) {
@@ -346,17 +322,7 @@ formularioLogin.addEventListener("submit", async (event) => {
     if (perfil) {
       console.log(`👋 Bem-vindo de volta, ${perfil.nome || perfil.usuario}!`);
     } else {
-      console.warn(
-        "⚠️ Token salvo é inválido ou expirou. Faça login novamente.",
-      );
+      console.warn("⚠️ Token salvo é inválido ou expirou. Faça login novamente.");
     }
   }
 })();
-
-// --- Função utilitária de logout (para usar em outras telas) ---
-function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("usuario");
-  localStorage.removeItem("nome");
-  window.location.href = "/login";
-}
