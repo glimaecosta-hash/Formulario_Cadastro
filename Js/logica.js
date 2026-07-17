@@ -42,6 +42,10 @@ async function requisitar(endpoint, opcoes = {}) {
 
   const headers = {
     "Content-Type": "application/json",
+    // 🚫 Evita cache do navegador em qualquer requisição
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
     ...(opcoes.headers || {}),
   };
 
@@ -50,11 +54,24 @@ async function requisitar(endpoint, opcoes = {}) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
+  // URL com timestamp para evitar cache de GET
+  let url = `${API_URL}${endpoint}`;
+  if ((opcoes.method || "GET").toUpperCase() === "GET") {
+    const sep = url.includes("?") ? "&" : "?";
+    url = `${url}${sep}_t=${Date.now()}`;
+  }
+
+  console.log(`📤 ${opcoes.method || "GET"} ${url}`);
+
   try {
-    const resposta = await fetch(`${API_URL}${endpoint}`, {
+    const resposta = await fetch(url, {
       ...opcoes,
       headers,
+      // 🚫 Reforça a não usar cache do navegador
+      cache: "no-store",
     });
+
+    console.log(`📥 Resposta: ${resposta.status} ${resposta.statusText}`);
 
     // 204 No Content (resposta vazia)
     if (resposta.status === 204) {
@@ -104,42 +121,27 @@ async function requisitar(endpoint, opcoes = {}) {
 //   SESSÃO E TOKEN
 // ============================================
 
-/**
- * Salva o token JWT e os dados do usuário no localStorage.
- */
 function salvarSessao(accessToken, dadosUsuario) {
   localStorage.setItem(TOKEN_KEY, accessToken);
   localStorage.setItem(USER_KEY, JSON.stringify(dadosUsuario));
   console.log("✅ Token salvo no localStorage:", accessToken);
 }
 
-/**
- * Recupera os dados do usuário logado (sem fazer requisição).
- */
 function obterUsuarioLogado() {
   const dados = localStorage.getItem(USER_KEY);
   return dados ? JSON.parse(dados) : null;
 }
 
-/**
- * Verifica se existe token salvo no localStorage.
- */
 function estaLogado() {
   return !!localStorage.getItem(TOKEN_KEY);
 }
 
-/**
- * Remove todos os dados de sessão.
- */
 function logout() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   console.log("🚪 Sessão encerrada (logout).");
 }
 
-/**
- * Busca os dados atualizados do usuário logado na rota protegida /api/me.
- */
 async function carregarPerfil() {
   try {
     const perfil = await requisitar("/api/me", { method: "GET" });
@@ -168,7 +170,6 @@ async function carregarPerfil() {
 
 const formCadastro = document.getElementById("form-cadastro");
 
-// Validações de tamanho mínimo (espelhando o backend)
 function validarCadastro(dados) {
   if (dados.nome.length < 2) {
     return "O nome deve ter pelo menos 2 caracteres!";
@@ -179,7 +180,7 @@ function validarCadastro(dados) {
   if (dados.senha.length < 6) {
     return "A senha deve ter pelo menos 6 caracteres!";
   }
-  return null; // Sem erros
+  return null;
 }
 
 formCadastro.addEventListener("submit", async (event) => {
@@ -191,6 +192,8 @@ formCadastro.addEventListener("submit", async (event) => {
   const email = document.getElementById("email").value.trim();
   const senha = document.getElementById("new-password").value;
   const confirmarSenha = document.getElementById("confirm-password").value;
+
+  console.log("📝 Tentando cadastrar:", { nome, usuario, email });
 
   // 2. Validação de senhas iguais
   if (senha !== confirmarSenha) {
@@ -206,10 +209,9 @@ formCadastro.addEventListener("submit", async (event) => {
   }
 
   // 4. 🚨 Limpa qualquer sessão antiga ANTES de cadastrar
-  // (evita conflito com token de usuário antigo no localStorage)
   logout();
 
-  // 5. Feedback visual: desabilita o botão enquanto envia
+  // 5. Feedback visual
   const btnSubmit = formCadastro.querySelector('button[type="submit"]');
   const textoOriginal = btnSubmit ? btnSubmit.textContent : null;
   if (btnSubmit) {
@@ -217,7 +219,7 @@ formCadastro.addEventListener("submit", async (event) => {
     btnSubmit.textContent = "Cadastrando...";
   }
 
-  // 6. Envia para a API usando a função genérica
+  // 6. Envia para a API
   try {
     const resultado = await requisitar("/api/cadastro", {
       method: "POST",
@@ -226,7 +228,6 @@ formCadastro.addEventListener("submit", async (event) => {
 
     console.log("✅ Cadastro realizado:", resultado);
 
-    // Mostra mensagem de sucesso incluindo o status do e-mail
     let msg = resultado.mensagem || "Cadastro realizado com sucesso!";
     if (resultado.email_enviado === false) {
       msg += "\n\n⚠️ Não foi possível enviar o e-mail de boas-vindas.";
@@ -235,14 +236,12 @@ formCadastro.addEventListener("submit", async (event) => {
     }
     alert(msg);
 
-    // Limpa o formulário e volta para a tela de login
     formCadastro.reset();
     btnEntrar.click();
   } catch (error) {
     console.error("❌ Erro no cadastro:", error.message);
     alert("Erro ao cadastrar: " + error.message);
   } finally {
-    // Reabilita o botão independente do resultado
     if (btnSubmit) {
       btnSubmit.disabled = false;
       if (textoOriginal) btnSubmit.textContent = textoOriginal;
@@ -259,22 +258,18 @@ const formularioLogin = document.getElementById("formulario-login");
 formularioLogin.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  // Captura o input do usuário
   let usuarioInput = document.getElementById("campo-usuario").value.trim();
   const senhaInput = document.getElementById("campo-senha").value;
   const mensagemErro = document.getElementById("mensagem-erro");
 
-  // Garante que comece com @ para refletir a regra do backend Python
   if (!usuarioInput.startsWith("@")) {
     usuarioInput = `@${usuarioInput}`;
   }
 
-  // Limpa mensagens anteriores
   mensagemErro.textContent = "";
   mensagemErro.style.color = "";
 
   try {
-    // Envia credenciais para /api/login
     const resultado = await requisitar("/api/login", {
       method: "POST",
       body: JSON.stringify({
@@ -283,30 +278,23 @@ formularioLogin.addEventListener("submit", async (event) => {
       }),
     });
 
-    // LOGIN DEU CERTO! 🎉
-    mensagemErro.textContent =
-      resultado.mensagem || "Login realizado com sucesso!";
+    mensagemErro.textContent = resultado.mensagem || "Login realizado com sucesso!";
     mensagemErro.style.color = "green";
 
-    // Salva o token JWT e os dados no localStorage
     if (resultado.access_token) {
       salvarSessao(resultado.access_token, {
         usuario: resultado.usuario,
         nome: resultado.nome,
       });
-
-      // Confirma a sessão buscando dados atualizados via /api/me
       await carregarPerfil();
     }
 
-    // Mostra o card deslizante de "Verifique seu e-mail"
     const cardAviso = document.getElementById("card-aviso");
     if (cardAviso) {
       cardAviso.classList.add("mostrar");
       setTimeout(() => cardAviso.classList.remove("mostrar"), 10000);
     }
 
-    // Limpa os campos
     document.getElementById("campo-usuario").value = "";
     document.getElementById("campo-senha").value = "";
   } catch (error) {
@@ -326,9 +314,7 @@ formularioLogin.addEventListener("submit", async (event) => {
     if (perfil) {
       console.log(`👋 Bem-vindo de volta, ${perfil.nome || perfil.usuario}!`);
     } else {
-      console.warn(
-        "⚠️ Token salvo é inválido ou expirou. Faça login novamente.",
-      );
+      console.warn("⚠️ Token salvo é inválido ou expirou. Faça login novamente.");
     }
   }
 })();
