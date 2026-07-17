@@ -2,7 +2,7 @@
 //   CONFIGURAÇÕES GLOBAIS
 // ============================================
 
-const API_URL = "https://api-formulario-cadastro-main.onrender.com";  
+const API_URL = "https://api-formulario-cadastro-main.onrender.com";
 
 // Chaves usadas no localStorage (centralizadas para fácil manutenção)
 const TOKEN_KEY = "access_token";
@@ -36,11 +36,6 @@ btnEntrar.addEventListener("click", () => {
  * Faz requisições HTTP para a API, adicionando automaticamente
  * o header Authorization: Bearer <token> se houver token salvo.
  * Trata erros padronizados do FastAPI (HTTPException).
- *
- * @param {string} endpoint - Ex: "/api/login", "/api/me"
- * @param {object} opcoes - { method, body, ... }
- * @returns {Promise<object>} - Resposta JSON em caso de sucesso
- * @throws {Error} - Lança erro com a mensagem vinda do backend
  */
 async function requisitar(endpoint, opcoes = {}) {
   const token = localStorage.getItem(TOKEN_KEY);
@@ -144,14 +139,12 @@ function logout() {
 
 /**
  * Busca os dados atualizados do usuário logado na rota protegida /api/me.
- * Útil para confirmar se o token ainda é válido.
  */
 async function carregarPerfil() {
   try {
     const perfil = await requisitar("/api/me", { method: "GET" });
     console.log("👤 Perfil carregado:", perfil);
 
-    // Atualiza o localStorage com os dados mais recentes
     if (perfil) {
       localStorage.setItem(
         USER_KEY,
@@ -189,24 +182,6 @@ function validarCadastro(dados) {
   return null; // Sem erros
 }
 
-// Função genérica para tratar erros padronizados do FastAPI (HTTPException)
-async function tratarErroAPI(resposta) {
-  let erro;
-  try {
-    erro = await resposta.json();
-  } catch {
-    throw new Error(`Erro ${resposta.status}: ${resposta.statusText}`);
-  }
-
-  if (resposta.status === 422 && Array.isArray(erro.detail)) {
-    const primeiroErro = erro.detail[0];
-    const campo = primeiroErro.loc[primeiroErro.loc.length - 1];
-    throw new Error(`${campo}: ${primeiroErro.msg}`);
-  }
-
-  throw new Error(erro.detail || `Erro ${resposta.status}`);
-}
-
 formCadastro.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -230,20 +205,48 @@ formCadastro.addEventListener("submit", async (event) => {
     return;
   }
 
-  // 4. Envia para a API usando a função genérica
+  // 4. 🚨 Limpa qualquer sessão antiga ANTES de cadastrar
+  // (evita conflito com token de usuário antigo no localStorage)
+  logout();
+
+  // 5. Feedback visual: desabilita o botão enquanto envia
+  const btnSubmit = formCadastro.querySelector('button[type="submit"]');
+  const textoOriginal = btnSubmit ? btnSubmit.textContent : null;
+  if (btnSubmit) {
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Cadastrando...";
+  }
+
+  // 6. Envia para a API usando a função genérica
   try {
     const resultado = await requisitar("/api/cadastro", {
       method: "POST",
       body: JSON.stringify({ nome, usuario, email, senha }),
     });
 
-    alert(resultado.mensagem || "Cadastro realizado com sucesso!");
+    console.log("✅ Cadastro realizado:", resultado);
+
+    // Mostra mensagem de sucesso incluindo o status do e-mail
+    let msg = resultado.mensagem || "Cadastro realizado com sucesso!";
+    if (resultado.email_enviado === false) {
+      msg += "\n\n⚠️ Não foi possível enviar o e-mail de boas-vindas.";
+    } else if (resultado.email_enviado === true) {
+      msg += "\n\n📧 Verifique sua caixa de entrada!";
+    }
+    alert(msg);
 
     // Limpa o formulário e volta para a tela de login
     formCadastro.reset();
     btnEntrar.click();
   } catch (error) {
-    alert(error.message);
+    console.error("❌ Erro no cadastro:", error.message);
+    alert("Erro ao cadastrar: " + error.message);
+  } finally {
+    // Reabilita o botão independente do resultado
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      if (textoOriginal) btnSubmit.textContent = textoOriginal;
+    }
   }
 });
 
@@ -261,7 +264,7 @@ formularioLogin.addEventListener("submit", async (event) => {
   const senhaInput = document.getElementById("campo-senha").value;
   const mensagemErro = document.getElementById("mensagem-erro");
 
-  // Garante que comece com @ para refletir a regra do backend Python (.startsWith com 'S' maiúsculo)
+  // Garante que comece com @ para refletir a regra do backend Python
   if (!usuarioInput.startsWith("@")) {
     usuarioInput = `@${usuarioInput}`;
   }
@@ -281,7 +284,8 @@ formularioLogin.addEventListener("submit", async (event) => {
     });
 
     // LOGIN DEU CERTO! 🎉
-    mensagemErro.textContent = resultado.mensagem || "Login realizado com sucesso!";
+    mensagemErro.textContent =
+      resultado.mensagem || "Login realizado com sucesso!";
     mensagemErro.style.color = "green";
 
     // Salva o token JWT e os dados no localStorage
@@ -322,7 +326,9 @@ formularioLogin.addEventListener("submit", async (event) => {
     if (perfil) {
       console.log(`👋 Bem-vindo de volta, ${perfil.nome || perfil.usuario}!`);
     } else {
-      console.warn("⚠️ Token salvo é inválido ou expirou. Faça login novamente.");
+      console.warn(
+        "⚠️ Token salvo é inválido ou expirou. Faça login novamente.",
+      );
     }
   }
 })();
