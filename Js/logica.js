@@ -2,7 +2,8 @@
 //   CONFIGURAÇÕES GLOBAIS
 // ============================================
 
-const API_URL = "https://api-formulario-cadastro-main.onrender.com";
+// const API_URL = "https://api-formulario-cadastro-main.onrender.com";
+const API_URL = "https://api-formulario-cadastro-main.onrender.com"; // URL da API (ajuste conforme necessário)
 
 // Chaves usadas no localStorage (centralizadas para fácil manutenção)
 const TOKEN_KEY = "access_token";
@@ -227,7 +228,6 @@ formCadastro.addEventListener("submit", async (event) => {
     });
 
     console.log("✅ Cadastro realizado:", resultado);
-
     let msg = resultado.mensagem || "Cadastro realizado com sucesso!";
     if (resultado.email_enviado === false) {
       msg += "\n\n⚠️ Não foi possível enviar o e-mail de boas-vindas.";
